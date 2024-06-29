@@ -1,4 +1,4 @@
-<html><head><base href="https://leno.live/"><title>Leno - A Fresh Social, Without the Crap</title>
+<html><head><base href="https://leno.live/"><title>Leno - A Fresh Social Experience</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -20,10 +20,14 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-.nav a {
+.nav a, .nav button {
     color: #FFFF00;
     text-decoration: none;
     margin: 0 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
 }
 .content {
     padding: 20px;
@@ -38,12 +42,6 @@ body {
     margin: 10px;
     cursor: pointer;
     font-weight: bold;
-}
-.admin-flair {
-    background-color: #FF0000;
-    color: #FFFF00;
-    padding: 5px 10px;
-    border-radius: 5px;
 }
 .user-menu {
     position: relative;
@@ -71,72 +69,79 @@ body {
 .user-menu:hover .user-menu-content {
     display: block;
 }
-.post-container {
-    background-color: #FFFFFF;
-    border: 1px solid #FF3333;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-.post-title {
+.auth-buttons button {
+    background-color: #FFFF00;
     color: #FF0000;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-.post-meta {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 10px;
-}
-.post-content {
-    font-size: 14px;
-    line-height: 1.6;
-}
-.vote-buttons {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-}
-.vote-button {
-    background: none;
     border: none;
-    font-size: 20px;
+    padding: 8px 16px;
+    margin-left: 10px;
     cursor: pointer;
-    padding: 0 5px;
-}
-.vote-count {
-    margin: 0 10px;
     font-weight: bold;
 }
-.admin-actions {
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: #FFEBEB;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.error-message {
+    color: #FF0000;
     margin-top: 10px;
 }
-.admin-actions button {
-    background-color: #FF3333;
-    color: #FFFF00;
-    border: none;
-    padding: 5px 10px;
-    margin-right: 5px;
-    cursor: pointer;
+.admin-flair {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    animation: flashFlair 4s infinite;
+}
+@keyframes flashFlair {
+    0%, 100% { background-color: #FF0000; color: #FFFF00; }
+    50% { background-color: #FFFF00; color: #FF0000; }
+}
+.admin-controls {
+    display: none;
 }
 </style>
 </head>
 <body>
 <div class="header">
     <h1>Leno</h1>
-    <p>A fresh social, without the crap.</p>
+    <p>A fresh social experience</p>
 </div>
 <div class="nav">
     <div>
         <a href="/">Home</a>
-        <a href="/admin-dashboard" id="admin-dashboard-link" style="display:none;">ADMIN DASHBOARD</a>
+        <a href="#" id="admin-dashboard-link" style="display:none;">ADMIN DASHBOARD</a>
     </div>
-    <div class="user-menu">
-        <span id="user-display">Guest</span>
-        <div class="user-menu-content">
-            <a href="/settings">Settings</a>
-            <a href="#" onclick="logout()">Log Out</a>
-        </div>
+    <div id="user-area">
+        <!-- This area will be populated dynamically based on login status -->
     </div>
 </div>
 <div class="content">
@@ -147,10 +152,65 @@ body {
     </div>
     
     <h2>Welcome to Leno!</h2>
-    <p>Join the revolution in social networking. Leno is a platform where your voice matters, without the clutter.</p>
+    <p>Join the revolution in social networking. Leno is a platform where your voice matters.</p>
     
     <div id="posts-container">
         <!-- Posts will be dynamically loaded here -->
+        <p>No posts to display. Be the first to make a post!</p>
+    </div>
+</div>
+
+<!-- Modal for Sign In -->
+<div id="signInModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Sign In</h2>
+        <form id="signInForm">
+            <label for="signInUsername">Username:</label><br>
+            <input type="text" id="signInUsername" name="username" required><br>
+            <label for="signInPassword">Password:</label><br>
+            <input type="password" id="signInPassword" name="password" required><br><br>
+            <input type="submit" value="Sign In">
+        </form>
+        <p id="signInError" class="error-message"></p>
+    </div>
+</div>
+
+<!-- Modal for Sign Up -->
+<div id="signUpModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Sign Up</h2>
+        <form id="signUpForm">
+            <label for="signUpUsername">Username:</label><br>
+            <input type="text" id="signUpUsername" name="username" required><br>
+            <label for="signUpEmail">Email:</label><br>
+            <input type="email" id="signUpEmail" name="email" required><br>
+            <label for="signUpPassword">Password:</label><br>
+            <input type="password" id="signUpPassword" name="password" required><br><br>
+            <input type="submit" value="Sign Up">
+        </form>
+        <p id="signUpError" class="error-message"></p>
+    </div>
+</div>
+
+<!-- Admin Dashboard Modal -->
+<div id="adminDashboardModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Admin Dashboard</h2>
+        <div id="adminTabs">
+            <button onclick="showAdminTab('contentReports')">Content Reports</button>
+            <button onclick="showAdminTab('communityRequests')">Community Requests</button>
+        </div>
+        <div id="contentReports" class="admin-tab">
+            <h3>Content Reports</h3>
+            <!-- Content reports will be loaded here -->
+        </div>
+        <div id="communityRequests" class="admin-tab" style="display:none;">
+            <h3>Community Requests</h3>
+            <!-- Community requests will be loaded here -->
+        </div>
     </div>
 </div>
 
@@ -158,6 +218,13 @@ body {
 let lastActivity = Date.now();
 let inactivityTimeout;
 let isAdmin = false;
+
+// Simulated database
+const userDatabase = [
+    { username: 'Administrator', password: 'adminpass', isAdmin: true, profilePicture: null },
+    { username: 'user1', password: 'pass1', isAdmin: false, profilePicture: null },
+    { username: 'user2', password: 'pass2', isAdmin: false, profilePicture: null }
+];
 
 function updateLastActivity() {
     lastActivity = Date.now();
@@ -175,69 +242,122 @@ function checkInactivity() {
 
 function logout() {
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    updateUserArea();
 }
 
 function checkAdminStatus() {
     const user = JSON.parse(localStorage.getItem('user'));
     isAdmin = user && user.isAdmin;
     document.getElementById('admin-dashboard-link').style.display = isAdmin ? 'inline' : 'none';
-    document.getElementById('user-display').textContent = user ? user.username : 'Guest';
 }
 
-function loadPosts() {
-    // In a real application, this would fetch posts from a server
-    const postsContainer = document.getElementById('posts-container');
-    postsContainer.innerHTML = '<p>No posts to display. Be the first to make a post!</p>';
-}
-
-function vote(button, direction) {
-    let voteCount = button.parentElement.querySelector('.vote-count');
-    let currentVotes = parseInt(voteCount.textContent);
-    voteCount.textContent = currentVotes + direction;
-    // In a real application, this would send the vote to the server
-}
-
-function removePost(button) {
-    if (confirm('Are you sure you want to remove this post?')) {
-        button.closest('.post-container').style.display = 'none';
-        // In a real application, this would send a request to the server to remove the post
-    }
-}
-
-function approvePost(button) {
-    button.style.backgroundColor = '#00FF00';
-    button.textContent = 'Approved';
-    // In a real application, this would send a request to the server to approve the post
-}
-
-function hideComment(button) {
-    let post = button.closest('.post-container');
-    let content = post.querySelector('.post-content');
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        button.textContent = 'Hide Comment';
+function updateUserArea() {
+    const userArea = document.getElementById('user-area');
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (user) {
+        let adminFlair = user.isAdmin ? '<span class="admin-flair">ADMIN</span>' : '';
+        userArea.innerHTML = `
+            <div class="user-menu">
+                <span id="user-display">${user.username} ${adminFlair}</span>
+                <div class="user-menu-content">
+                    <a href="/settings">Settings</a>
+                    <a href="#" onclick="logout()">Log Out</a>
+                </div>
+            </div>
+        `;
     } else {
-        content.style.display = 'none';
-        button.textContent = 'Show Comment';
+        userArea.innerHTML = `
+            <div class="auth-buttons">
+                <button onclick="openModal('signInModal')">Sign In</button>
+                <button onclick="openModal('signUpModal')">Sign Up</button>
+            </div>
+        `;
     }
-    // In a real application, this would send a request to the server to hide/show the comment
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    if (event.target.className === "modal") {
+        event.target.style.display = "none";
+    }
+}
+
+function authenticateUser(username, password) {
+    return userDatabase.find(user => user.username === username && user.password === password);
+}
+
+function showAdminTab(tabName) {
+    document.getElementById('contentReports').style.display = 'none';
+    document.getElementById('communityRequests').style.display = 'none';
+    document.getElementById(tabName).style.display = 'block';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     updateLastActivity();
     checkAdminStatus();
-    loadPosts();
+    updateUserArea();
+
+    // Set up event listeners for modal close buttons
+    let closeButtons = document.getElementsByClassName("close");
+    for (let i = 0; i < closeButtons.length; i++) {
+        closeButtons[i].onclick = function() {
+            closeModal(this.closest('.modal').id);
+        }
+    }
+
+    // Set up form submission handlers
+    document.getElementById('signInForm').onsubmit = function(e) {
+        e.preventDefault();
+        const username = document.getElementById('signInUsername').value;
+        const password = document.getElementById('signInPassword').value;
+        const user = authenticateUser(username, password);
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+            closeModal('signInModal');
+            updateUserArea();
+            checkAdminStatus();
+        } else {
+            document.getElementById('signInError').textContent = 'Invalid username or password';
+        }
+    }
+
+    document.getElementById('signUpForm').onsubmit = function(e) {
+        e.preventDefault();
+        const username = document.getElementById('signUpUsername').value;
+        const email = document.getElementById('signUpEmail').value;
+        const password = document.getElementById('signUpPassword').value;
+        if (userDatabase.some(user => user.username === username)) {
+            document.getElementById('signUpError').textContent = 'Username already exists';
+        } else {
+            const newUser = { username, password, isAdmin: false, profilePicture: null };
+            userDatabase.push(newUser);
+            localStorage.setItem('user', JSON.stringify(newUser));
+            closeModal('signUpModal');
+            updateUserArea();
+            checkAdminStatus();
+        }
+    }
+
+    document.getElementById('admin-dashboard-link').onclick = function(e) {
+        e.preventDefault();
+        if (isAdmin) {
+            openModal('adminDashboardModal');
+        }
+    }
 });
 
 document.addEventListener('mousemove', updateLastActivity);
 document.addEventListener('keypress', updateLastActivity);
 
 window.addEventListener('beforeunload', logout);
-
-// Simulating login (remove this in production)
-if (!localStorage.getItem('user')) {
-    window.location.href = '/login';
-}
 </script>
 </body></html>
