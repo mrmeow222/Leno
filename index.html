@@ -149,9 +149,9 @@ body {
 </div>
 <div class="content">
     <div style="text-align: right;">
-        <button class="button" onclick="location.href='/post'">Make a post</button>
-        <button class="button" onclick="location.href='/contact'">Contact the admins</button>
-        <button class="button" onclick="location.href='/request'">Request a community</button>
+        <button class="button" onclick="openModal('makePostModal')">Make a post</button>
+        <button class="button" onclick="openModal('contactAdminsModal')">Contact the admins</button>
+        <button class="button" onclick="openModal('requestCommunityModal')">Request a community</button>
     </div>
     
     <h2>Welcome to Leno!</h2>
@@ -194,6 +194,59 @@ body {
             <input type="submit" value="Sign Up">
         </form>
         <p id="signUpError" class="error-message"></p>
+    </div>
+</div>
+
+<!-- Modal for Make a Post -->
+<div id="makePostModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Make a Post</h2>
+        <form id="makePostForm">
+            <label for="postTitle">Title:</label><br>
+            <input type="text" id="postTitle" name="title" required><br>
+            <label for="postContent">Content:</label><br>
+            <textarea id="postContent" name="content" required></textarea><br>
+            <label for="postCommunity">Community:</label><br>
+            <input type="text" id="postCommunity" name="community" required><br>
+            <input type="checkbox" id="postNSFW" name="nsfw">
+            <label for="postNSFW">NSFW</label>
+            <input type="checkbox" id="postNSFL" name="nsfl">
+            <label for="postNSFL">NSFL</label><br><br>
+            <input type="submit" value="Post">
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Contact Admins -->
+<div id="contactAdminsModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Contact Admins</h2>
+        <form id="contactAdminsForm">
+            <label for="contactReason">Reason for contact:</label><br>
+            <textarea id="contactReason" name="reason" required></textarea><br>
+            <label for="contactEmail">Your email (if you want a reply):</label><br>
+            <input type="email" id="contactEmail" name="email"><br><br>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Request Community -->
+<div id="requestCommunityModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Request a Community</h2>
+        <form id="requestCommunityForm">
+            <label for="communityName">Community Name:</label><br>
+            <input type="text" id="communityName" name="name" required><br>
+            <label for="communityReason">Why do you want this community?</label><br>
+            <textarea id="communityReason" name="reason" required></textarea><br>
+            <label for="communityPlans">What are your plans for the community?</label><br>
+            <textarea id="communityPlans" name="plans" required></textarea><br><br>
+            <input type="submit" value="Submit Request">
+        </form>
     </div>
 </div>
 
@@ -274,7 +327,7 @@ function updateUserArea() {
             <div class="user-menu">
                 <span id="user-display">${user.username} ${adminFlair}</span>
                 <div class="user-menu-content">
-                    <a href="/settings">Settings</a>
+                    <a href="#" onclick="openModal('settingsModal')">Settings</a>
                     <a href="#" onclick="logout()">Log Out</a>
                 </div>
             </div>
@@ -365,9 +418,32 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('admin-dashboard-link').onclick = function(e) {
         e.preventDefault();
         if (isAdmin) {
+""
             openModal('adminDashboardModal');
             showAdminTab('contentReports');
         }
+    }
+
+    document.getElementById('makePostForm').onsubmit = function(e) {
+        e.preventDefault();
+        // Here you would typically send the post data to a server
+        // For this example, we'll just close the modal
+        closeModal('makePostModal');
+        alert('Post created successfully!');
+    }
+
+    document.getElementById('contactAdminsForm').onsubmit = function(e) {
+        e.preventDefault();
+        // Here you would typically send the message to admins
+        closeModal('contactAdminsModal');
+        alert('Message sent to admins!');
+    }
+
+    document.getElementById('requestCommunityForm').onsubmit = function(e) {
+        e.preventDefault();
+        // Here you would typically send the community request
+        closeModal('requestCommunityModal');
+        alert('Community request submitted!');
     }
 });
 
