@@ -1,0 +1,420 @@
+<html><head><base href="https://leno.live"><title>Leno.Live - A Community-Driven Discussion Platform</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f6f7f8;
+  }
+  .header {
+    background-color: #ff4500;
+    color: #ffff00;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .user-controls {
+    display: flex;
+    align-items: center;
+  }
+  .button {
+    background-color: #ffff00;
+    color: #ff4500;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .post {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .post-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .post-meta {
+    font-size: 12px;
+    color: #888;
+  }
+  .vote-buttons {
+    display: flex;
+    align-items: center;
+  }
+  .vote-up {
+    color: #4CAF50;
+    cursor: pointer;
+  }
+  .vote-down {
+    color: #2196F3;
+    cursor: pointer;
+  }
+  .vote-count {
+    margin: 0 5px;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .admin-flair {
+    background: linear-gradient(-45deg, #ff4500, #ffff00);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 5px;
+  }
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">Leno.Live</div>
+  <div id="admin-dashboard" style="display: none;">
+    <button class="button" onclick="openAdminDashboard()">ADMIN DASHBOARD</button>
+  </div>
+  <div class="user-controls" id="user-controls">
+    <button class="button" onclick="openModal('signin-modal')">Sign In</button>
+    <button class="button" onclick="openModal('signup-modal')">Sign Up</button>
+  </div>
+</header>
+
+<div class="content">
+  <div class="action-buttons">
+    <button class="button" onclick="openModal('post-modal')">Make a post</button>
+    <button class="button" onclick="openModal('contact-modal')">Contact the admins</button>
+    <button class="button" onclick="openModal('community-modal')">Request a community</button>
+  </div>
+
+  <div id="posts">
+    <!-- Posts will be dynamically added here -->
+  </div>
+</div>
+
+<!-- Modals -->
+<div id="post-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('post-modal')">&times;</span>
+    <h2>Make a post</h2>
+    <form id="post-form">
+      <input type="text" id="post-title" placeholder="Title" required><br>
+      <textarea id="post-content" placeholder="Content" required></textarea><br>
+      <select id="post-community" required>
+        <!-- Communities will be dynamically added here -->
+      </select><br>
+      <label><input type="checkbox" id="post-nsfw"> NSFW</label>
+      <label><input type="checkbox" id="post-nsfl"> NSFL</label><br>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<div id="contact-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('contact-modal')">&times;</span>
+    <h2>Contact the admins</h2>
+    <form id="contact-form">
+      <textarea id="contact-reason" placeholder="Why are you contacting the admins?" required></textarea><br>
+      <label><input type="checkbox" id="contact-reply"> I wish to be contacted back</label><br>
+      <input type="email" id="contact-email" placeholder="Your email (if you wish to be contacted)"><br>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<div id="community-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('community-modal')">&times;</span>
+    <h2>Request a community</h2>
+    <form id="community-form">
+      <input type="text" id="community-name" placeholder="Community name" required><br>
+      <textarea id="community-reason" placeholder="Why do you want this community?" required></textarea><br>
+      <textarea id="community-plans" placeholder="What are your plans for the community?" required></textarea><br>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<div id="signin-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('signin-modal')">&times;</span>
+    <h2>Sign In</h2>
+    <form id="signin-form">
+      <input type="text" id="signin-username" placeholder="Username" required><br>
+      <input type="password" id="signin-password" placeholder="Password" required><br>
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<div id="signup-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('signup-modal')">&times;</span>
+    <h2>Sign Up</h2>
+    <form id="signup-form">
+      <input type="text" id="signup-username" placeholder="Username" required><br>
+      <input type="password" id="signup-password" placeholder="Password" required><br>
+      <input type="email" id="signup-email" placeholder="Email" required><br>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentUser = null;
+let users = [
+  { username: 'Administrator', password: 'Mrmeow25', isAdmin: true }
+];
+let posts = [];
+let communities = [];
+
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = 'block';
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function signIn(username, password) {
+  const user = users.find(u => u.username === username && u.password === password);
+  if (user) {
+    currentUser = user;
+    updateUserControls();
+    closeModal('signin-modal');
+    return true;
+  }
+  return false;
+}
+
+function signUp(username, password, email) {
+  if (users.some(u => u.username === username)) {
+    return false;
+  }
+  const newUser = { username, password, email };
+  users.push(newUser);
+  currentUser = newUser;
+  updateUserControls();
+  closeModal('signup-modal');
+  return true;
+}
+
+function updateUserControls() {
+  const controls = document.getElementById('user-controls');
+  controls.innerHTML = '';
+  if (currentUser) {
+    controls.innerHTML = `
+      <span>${currentUser.username}</span>
+      ${currentUser.isAdmin ? '<span class="admin-flair">ADMIN</span>' : ''}
+      <button class="button" onclick="openSettings()">Settings</button>
+      <button class="button" onclick="signOut()">Sign Out</button>
+    `;
+    if (currentUser.isAdmin) {
+      document.getElementById('admin-dashboard').style.display = 'block';
+    }
+  } else {
+    controls.innerHTML = `
+      <button class="button" onclick="openModal('signin-modal')">Sign In</button>
+      <button class="button" onclick="openModal('signup-modal')">Sign Up</button>
+    `;
+    document.getElementById('admin-dashboard').style.display = 'none';
+  }
+}
+
+function signOut() {
+  currentUser = null;
+  updateUserControls();
+}
+
+function createPost(title, content, community, isNSFW, isNSFL) {
+  if (!currentUser) return false;
+  const newPost = {
+    id: posts.length + 1,
+    title,
+    content,
+    author: currentUser.username,
+    community,
+    isNSFW,
+    isNSFL,
+    createdAt: new Date(),
+    votes: 1,
+    comments: []
+  };
+  posts.push(newPost);
+  renderPosts();
+  closeModal('post-modal');
+  return true;
+}
+
+function renderPosts() {
+  const postsContainer = document.getElementById('posts');
+  postsContainer.innerHTML = '';
+  posts.forEach(post => {
+    const postElement = document.createElement('div');
+    postElement.className = 'post';
+    postElement.innerHTML = `
+      <h3 class="post-title">${post.title}</h3>
+      <p class="post-meta">Posted by -${post.author} in /${post.community} ${post.isNSFW ? 'NSFW' : ''} ${post.isNSFL ? 'NSFL' : ''}</p>
+      <p>${post.content}</p>
+      <div class="vote-buttons">
+        <span class="vote-up" onclick="vote(${post.id}, 1)">▲</span>
+        <span class="vote-count">${post.votes}</span>
+        <span class="vote-down" onclick="vote(${post.id}, -1)">▼</span>
+      </div>
+      <button onclick="viewComments(${post.id})">View Comments</button>
+      ${currentUser && currentUser.isAdmin ? `
+        <button onclick="removePost(${post.id})">Remove</button>
+        <button onclick="approvePost(${post.id})">Approve</button>
+      ` : ''}
+    `;
+    postsContainer.appendChild(postElement);
+  });
+}
+
+function vote(postId, value) {
+  if (!currentUser) return;
+  const post = posts.find(p => p.id === postId);
+  if (post) {
+    post.votes += value;
+    renderPosts();
+  }
+}
+
+function viewComments(postId) {
+  // Implement comment viewing logic
+}
+
+function removePost(postId) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  posts = posts.filter(p => p.id !== postId);
+  renderPosts();
+}
+
+function approvePost(postId) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  const post = posts.find(p => p.id === postId);
+  if (post) {
+    post.approved = true;
+    renderPosts();
+  }
+}
+
+function openAdminDashboard() {
+  if (!currentUser || !currentUser.isAdmin) return;
+  window.location.href = 'https://leno.live/admin';
+}
+
+function openSettings() {
+  // Implement settings modal
+}
+
+// Event listeners
+document.getElementById('post-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const title = document.getElementById('post-title').value;
+  const content = document.getElementById('post-content').value;
+  const community = document.getElementById('post-community').value;
+  const isNSFW = document.getElementById('post-nsfw').checked;
+  const isNSFL = document.getElementById('post-nsfl').checked;
+  createPost(title, content, community, isNSFW, isNSFL);
+});
+
+document.getElementById('signin-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const username = document.getElementById('signin-username').value;
+  const password = document.getElementById('signin-password').value;
+  if (!signIn(username, password)) {
+    alert('Invalid username or password');
+  }
+});
+
+document.getElementById('signup-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const username = document.getElementById('signup-username').value;
+  const password = document.getElementById('signup-password').value;
+  const email = document.getElementById('signup-email').value;
+  if (!signUp(username, password, email)) {
+    alert('Username already exists');
+  }
+});
+
+// Initialize
+updateUserControls();
+renderPosts();
+
+// Auto logout after 15 minutes of inactivity
+let inactivityTimer;
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (currentUser) {
+      signOut();
+      alert('You have been logged out due to inactivity');
+    }
+  }, 15 * 60 * 1000); // 15 minutes
+}
+document.addEventListener('mousemove', resetInactivityTimer);
+document.addEventListener('keypress', resetInactivityTimer);
+resetInactivityTimer();
+</script>
+</body></html>
