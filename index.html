@@ -1,312 +1,197 @@
-<html><head><base href="/admin-dashboard"><title>Leno Admin Dashboard</title>
+<html><head><base href="https://leno.com/"><title>Leno - A Fresh Social, Without the Crap</title>
 <style>
-  body {
+body {
     font-family: Arial, sans-serif;
+    background-color: #FFEBEB;
+    color: #333;
     margin: 0;
     padding: 0;
-    background-color: #f8f8f8;
-    color: #333;
-  }
-  .header {
+}
+.header {
     background-color: #FF0000;
     color: #FFFF00;
     padding: 10px 0;
     text-align: center;
-  }
-  .logo {
-    font-size: 2em;
-    font-weight: bold;
-  }
-  .nav {
-    background-color: #FFFF00;
+}
+.nav {
+    background-color: #FF3333;
     padding: 10px;
-    text-align: center;
-  }
-  .nav a {
-    color: #FF0000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav a {
+    color: #FFFF00;
     text-decoration: none;
     margin: 0 10px;
-    font-weight: bold;
-  }
-  .content {
-    display: flex;
-    max-width: 1200px;
-    margin: 20px auto;
-  }
-  .sidebar {
-    width: 200px;
-    background-color: #FF0000;
+}
+.content {
     padding: 20px;
-    border-radius: 5px;
-  }
-  .sidebar button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #FFFF00;
-    color: #FF0000;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  .main-content {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    margin-left: 20px;
-  }
-  .queue {
-    display: none;
-  }
-  .queue-item {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-  .queue-item button {
-    margin-right: 10px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  .approve {
-    background-color: #4CAF50;
-    color: white;
-  }
-  .deny {
-    background-color: #f44336;
-    color: white;
-  }
-  .admin-flair {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.button {
     background-color: #FF0000;
     color: #FFFF00;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-size: 0.8em;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.admin-flair {
+    background-color: #FF0000;
+    color: #FFFF00;
+    padding: 5px 10px;
+    border-radius: 5px;
     position: relative;
-    display: inline-block;
-  }
-  .admin-flair::before,
-  .admin-flair::after {
+}
+.admin-flair::before,
+.admin-flair::after,
+.admin-flair::before,
+.admin-flair::after {
     content: '';
     position: absolute;
     width: 5px;
     height: 5px;
     background-color: #FFFF00;
-    border-radius: 50%;
     animation: blink 1s infinite;
-  }
-  .admin-flair::before { top: -2px; left: -2px; }
-  .admin-flair::after { top: -2px; right: -2px; }
-  .admin-flair::before { bottom: -2px; left: -2px; }
-  .admin-flair::after { bottom: -2px; right: -2px; }
-  @keyframes blink {
+}
+.admin-flair::before { top: -2px; left: -2px; }
+.admin-flair::after { bottom: -2px; right: -2px; }
+.admin-flair::before { top: -2px; right: -2px; }
+.admin-flair::after { bottom: -2px; left: -2px; }
+@keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
-  }
-  .message-reply {
+}
+.post {
+    background-color: #FFFFFF;
+    border: 1px solid #FF3333;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.post-title {
+    color: #FF0000;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.post-meta {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+.post-content {
+    font-size: 14px;
+    line-height: 1.6;
+}
+.vote-buttons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     margin-top: 10px;
-  }
-  .message-reply textarea {
-    width: 100%;
-    height: 60px;
-    margin-bottom: 5px;
-  }
+}
+.vote-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 10px;
+}
+.vote-count {
+    font-weight: bold;
+    margin: 0 10px;
+}
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="logo">Leno Admin Dashboard</div>
+    <h1>Leno</h1>
+    <p>A fresh social, without the crap.</p>
 </div>
 <div class="nav">
-  <a href="/">Home</a>
-  <a href="/communities">Communities</a>
-  <span id="auth-info"></span>
+    <div>
+        <a href="/">Home</a>
+        <a href="/settings">Settings</a>
+        <a href="/admin-dashboard">ADMIN DASHBOARD</a>
+    </div>
+    <div id="user-controls">
+        <span><span class="admin-flair">ADMIN</span> =Administration</span>
+        <a href="#" onclick="logout()">Log Out</a>
+    </div>
 </div>
 <div class="content">
-  <div class="sidebar">
-    <button onclick="showQueue('reports')">Report Queue</button>
-    <button onclick="showQueue('community-requests')">Community Request Queue</button>
-    <button onclick="showQueue('user-messages')">User Messages</button>
-    <button onclick="addAdmin()">Add Admin</button>
-  </div>
-  <div class="main-content">
-    <div id="reports" class="queue">
-      <h2>Report Queue</h2>
-      <!-- Reports will be dynamically added here -->
+    <h2>Welcome to Leno!</h2>
+    <p>Join the revolution in social networking. Leno is a platform where your voice matters, without the clutter.</p>
+    <div style="text-align: right;">
+        <button class="button" onclick="location.href='/create-post'">Make a post</button>
+        <button class="button" onclick="location.href='/request-community'">Request a community</button>
     </div>
-    <div id="community-requests" class="queue">
-      <h2>Community Request Queue</h2>
-      <!-- Community requests will be dynamically added here -->
+    <div style="margin-top: 20px;">
+        <button class="button" onclick="location.href='/contact-admins'">Contact Site Admins</button>
     </div>
-    <div id="user-messages" class="queue">
-      <h2>User Messages</h2>
-      <!-- User messages will be dynamically added here -->
+    
+    <h3>Recent Posts in /Leno</h3>
+    <div class="post">
+        <div class="post-title">New Slogan Alert!</div>
+        <div class="post-meta">Posted by <span class="admin-flair">ADMIN</span> =Administration in /Leno · 2 hours ago</div>
+        <div class="post-content">
+            Hey Leno community! We've updated our slogan to better reflect what we stand for: "A fresh social, without the crap." 
+            What do you think? We believe this captures our commitment to providing a clean, straightforward platform for meaningful interactions. 
+            Share your thoughts below!
+        </div>
+        <div class="vote-buttons">
+            <button class="vote-button" onclick="vote(1, this)">▲</button>
+            <span class="vote-count">89</span>
+            <button class="vote-button" onclick="vote(-1, this)">▼</button>
+        </div>
     </div>
-  </div>
+    
+    <div class="post">
+        <div class="post-title">Community Spotlight: /TechTalk</div>
+        <div class="post-meta">Posted by =LenoCommunityTeam in /Leno · 5 hours ago</div>
+        <div class="post-content">
+            We're excited to announce our newest approved community: /TechTalk! 
+            This space is dedicated to discussing the latest in technology and gadgets. 
+            Whether you're a tech novice or a seasoned pro, everyone is welcome to join the conversation. 
+            Head over to /TechTalk to start exploring!
+        </div>
+        <div class="vote-buttons">
+            <button class="vote-button" onclick="vote(1, this)">▲</button>
+            <span class="vote-count">62</span>
+            <button class="vote-button" onclick="vote(-1, this)">▼</button>
+        </div>
+    </div>
+
+    <div class="post">
+        <div class="post-title">Leno Update: Dark Mode Coming Soon!</div>
+        <div class="post-meta">Posted by <span class="admin-flair">ADMIN</span> =Administration in /Leno · 1 day ago</div>
+        <div class="post-content">
+            Great news, night owls! We've heard your requests, and we're thrilled to announce that Dark Mode is in the final stages of development. 
+            Soon, you'll be able to browse Leno comfortably at any hour. Stay tuned for the official release date!
+        </div>
+        <div class="vote-buttons">
+            <button class="vote-button" onclick="vote(1, this)">▲</button>
+            <span class="vote-count">215</span>
+            <button class="vote-button" onclick="vote(-1, this)">▼</button>
+        </div>
+    </div>
 </div>
 
 <script>
-let currentUser = localStorage.getItem('currentUser');
-let isAdmin = localStorage.getItem('isAdmin') === 'true';
-let reports = [];
-let communityRequests = [];
-let userMessages = [];
-
-function updateAuthInfo() {
-  const authInfo = document.getElementById('auth-info');
-  if (currentUser && isAdmin) {
-    authInfo.innerHTML = `Logged in as: <span class="admin-flair">ADMIN</span> ==${currentUser} | <a href="#" onclick="logout()">Log Out</a>`;
-  } else {
-    window.location.href = '/'; // Redirect non-admins to home page
-  }
-}
-
 function logout() {
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('isAdmin');
-  window.location.href = '/';
+    // In a real application, this would involve server-side logout
+    window.location.href = '/login';
 }
 
-function showQueue(queueName) {
-  document.querySelectorAll('.queue').forEach(q => q.style.display = 'none');
-  document.getElementById(queueName).style.display = 'block';
+function vote(direction, button) {
+    let voteCount = button.parentElement.querySelector('.vote-count');
+    let currentVotes = parseInt(voteCount.textContent);
+    voteCount.textContent = currentVotes + direction;
+    
+    // In a real application, this would send the vote to the server
+    console.log(`Vote ${direction > 0 ? 'up' : 'down'} recorded`);
 }
-
-function loadReports() {
-  const reportsQueue = document.getElementById('reports');
-  reportsQueue.innerHTML = '<h2>Report Queue</h2>';
-  if (reports.length === 0) {
-    reportsQueue.innerHTML += '<p>Congratulations, Leno Legend! You have cleared the queue!</p>';
-  } else {
-    reports.forEach(report => {
-      const reportElement = document.createElement('div');
-      reportElement.className = 'queue-item';
-      reportElement.innerHTML = `
-        <p><strong>Report ID:</strong> ${report.id}</p>
-        <p><strong>Post ID:</strong> ${report.postId}</p>
-        <p><strong>Reported by:</strong> ${report.reporter}</p>
-        <p><strong>Reported to:</strong> ${report.reportTo}</p>
-        <button class="approve" onclick="handleReport(${report.id}, true)">Approve</button>
-        <button class="deny" onclick="handleReport(${report.id}, false)">Deny</button>
-      `;
-      reportsQueue.appendChild(reportElement);
-    });
-  }
-}
-
-function loadCommunityRequests() {
-  const requestsQueue = document.getElementById('community-requests');
-  requestsQueue.innerHTML = '<h2>Community Request Queue</h2>';
-  if (communityRequests.length === 0) {
-    requestsQueue.innerHTML += '<p>No pending community requests.</p>';
-  } else {
-    communityRequests.forEach(request => {
-      const requestElement = document.createElement('div');
-      requestElement.className = 'queue-item';
-      requestElement.innerHTML = `
-        <p><strong>Community Name:</strong> /${request.name}</p>
-        <p><strong>Reason:</strong> ${request.reason}</p>
-        <p><strong>Requested by:</strong> ${request.requestedBy}</p>
-        <p><strong>NSFW:</strong> ${request.isNSFW ? 'Yes' : 'No'}</p>
-        <p><strong>NSFL:</strong> ${request.isNSFL ? 'Yes' : 'No'}</p>
-        <button class="approve" onclick="handleCommunityRequest(${request.id}, true)">Approve</button>
-        <button class="deny" onclick="handleCommunityRequest(${request.id}, false)">Deny</button>
-      `;
-      requestsQueue.appendChild(requestElement);
-    });
-  }
-}
-
-function loadUserMessages() {
-  const messagesQueue = document.getElementById('user-messages');
-  messagesQueue.innerHTML = '<h2>User Messages</h2>';
-  if (userMessages.length === 0) {
-    messagesQueue.innerHTML += '<p>No pending user messages.</p>';
-  } else {
-    userMessages.forEach(message => {
-      const messageElement = document.createElement('div');
-      messageElement.className = 'queue-item';
-      messageElement.innerHTML = `
-        <p><strong>Message ID:</strong> ${message.id}</p>
-        <p><strong>Content:</strong> ${message.content}</p>
-        <p><strong>Sent by:</strong> ${message.sender}</p>
-        <div class="message-reply">
-          <textarea id="reply-${message.id}" placeholder="Type your reply here"></textarea>
-          <button onclick="replyToMessage(${message.id})">Send Reply</button>
-        </div>
-        <button onclick="handleUserMessage(${message.id})">Mark as Resolved</button>
-      `;
-      if (message.replies.length > 0) {
-        messageElement.innerHTML += '<h4>Replies:</h4>';
-        message.replies.forEach(reply => {
-          messageElement.innerHTML += `
-            <p><strong>${reply.sender}:</strong> ${reply.content}</p>
-          `;
-        });
-      }
-      messagesQueue.appendChild(messageElement);
-    });
-  }
-}
-
-function handleReport(reportId, isApproved) {
-  reports = reports.filter(report => report.id !== reportId);
-  alert(`Report ${reportId} ${isApproved ? 'approved' : 'denied'}`);
-  loadReports();
-}
-
-function handleCommunityRequest(requestId, isApproved) {
-  const request = communityRequests.find(req => req.id === requestId);
-  if (isApproved) {
-    alert(`Community /${request.name} has been approved!`);
-  } else {
-    alert(`Community /${request.name} has been denied.`);
-  }
-  communityRequests = communityRequests.filter(req => req.id !== requestId);
-  loadCommunityRequests();
-}
-
-function handleUserMessage(messageId) {
-  userMessages = userMessages.filter(msg => msg.id !== messageId);
-  alert(`Message ${messageId} marked as resolved`);
-  loadUserMessages();
-}
-
-function replyToMessage(messageId) {
-  const replyContent = document.getElementById(`reply-${messageId}`).value;
-  if (replyContent.trim() !== '') {
-    const message = userMessages.find(msg => msg.id === messageId);
-    message.replies.push({
-      sender: currentUser,
-      content: replyContent
-    });
-    alert('Reply sent successfully');
-    loadUserMessages();
-  } else {
-    alert('Please enter a reply before sending');
-  }
-}
-
-function addAdmin() {
-  const username = prompt("Enter the username of the new admin:");
-  if (username) {
-    alert(`${username} has been granted admin privileges.`);
-    // In a real application, you would update the user's privileges in the database
-  }
-}
-
-// Initialize the dashboard
-updateAuthInfo();
-loadReports();
-loadCommunityRequests();
-loadUserMessages();
-showQueue('reports'); // Show reports queue by default
 </script>
-</body>
-</html>
+</body></html>
