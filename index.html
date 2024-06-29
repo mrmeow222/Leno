@@ -128,6 +128,9 @@ body {
 .admin-controls {
     display: none;
 }
+.admin-tab {
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -202,14 +205,24 @@ body {
         <div id="adminTabs">
             <button onclick="showAdminTab('contentReports')">Content Reports</button>
             <button onclick="showAdminTab('communityRequests')">Community Requests</button>
+            <button onclick="showAdminTab('adminMessages')">Admin Messages</button>
+            <button onclick="showAdminTab('appointAdmins')">Appoint Admins</button>
         </div>
         <div id="contentReports" class="admin-tab">
             <h3>Content Reports</h3>
             <!-- Content reports will be loaded here -->
         </div>
-        <div id="communityRequests" class="admin-tab" style="display:none;">
+        <div id="communityRequests" class="admin-tab">
             <h3>Community Requests</h3>
             <!-- Community requests will be loaded here -->
+        </div>
+        <div id="adminMessages" class="admin-tab">
+            <h3>Messages to Admins</h3>
+            <!-- Admin messages will be loaded here -->
+        </div>
+        <div id="appointAdmins" class="admin-tab">
+            <h3>Appoint New Admins</h3>
+            <!-- Admin appointment form will be here -->
         </div>
     </div>
 </div>
@@ -221,7 +234,7 @@ let isAdmin = false;
 
 // Simulated database
 const userDatabase = [
-    { username: 'Administrator', password: 'adminpass', isAdmin: true, profilePicture: null },
+    { username: 'Administrator', password: 'Mrmeow25', isAdmin: true, profilePicture: null },
     { username: 'user1', password: 'pass1', isAdmin: false, profilePicture: null },
     { username: 'user2', password: 'pass2', isAdmin: false, profilePicture: null }
 ];
@@ -296,8 +309,10 @@ function authenticateUser(username, password) {
 }
 
 function showAdminTab(tabName) {
-    document.getElementById('contentReports').style.display = 'none';
-    document.getElementById('communityRequests').style.display = 'none';
+    const tabs = document.getElementsByClassName('admin-tab');
+    for (let i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+    }
     document.getElementById(tabName).style.display = 'block';
 }
 
@@ -351,6 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         if (isAdmin) {
             openModal('adminDashboardModal');
+            showAdminTab('contentReports');
         }
     }
 });
