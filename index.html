@@ -1,4 +1,4 @@
-<html><head><base href="https://leno.com/"><title>Leno - A Fresh Social, Without the Crap</title>
+<html><head><base href="https://leno.live/"><title>Leno - A Fresh Social, Without the Crap</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -44,28 +44,34 @@ body {
     color: #FFFF00;
     padding: 5px 10px;
     border-radius: 5px;
+}
+.user-menu {
     position: relative;
+    display: inline-block;
 }
-.admin-flair::before,
-.admin-flair::after,
-.admin-flair::before,
-.admin-flair::after {
-    content: '';
+.user-menu-content {
+    display: none;
     position: absolute;
-    width: 5px;
-    height: 5px;
-    background-color: #FFFF00;
-    animation: blink 1s infinite;
+    background-color: #FFEBEB;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0;
 }
-.admin-flair::before { top: -2px; left: -2px; }
-.admin-flair::after { bottom: -2px; right: -2px; }
-.admin-flair::before { top: -2px; right: -2px; }
-.admin-flair::after { bottom: -2px; left: -2px; }
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+.user-menu-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
 }
-.post {
+.user-menu-content a:hover {
+    background-color: #FF3333;
+    color: #FFFF00;
+}
+.user-menu:hover .user-menu-content {
+    display: block;
+}
+.post-container {
     background-color: #FFFFFF;
     border: 1px solid #FF3333;
     border-radius: 5px;
@@ -88,20 +94,30 @@ body {
 }
 .vote-buttons {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     margin-top: 10px;
 }
 .vote-button {
-    background-color: transparent;
+    background: none;
     border: none;
-    cursor: pointer;
     font-size: 20px;
-    margin-right: 10px;
+    cursor: pointer;
+    padding: 0 5px;
 }
 .vote-count {
-    font-weight: bold;
     margin: 0 10px;
+    font-weight: bold;
+}
+.admin-actions {
+    margin-top: 10px;
+}
+.admin-actions button {
+    background-color: #FF3333;
+    color: #FFFF00;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
 }
 </style>
 </head>
@@ -113,85 +129,115 @@ body {
 <div class="nav">
     <div>
         <a href="/">Home</a>
-        <a href="/settings">Settings</a>
-        <a href="/admin-dashboard">ADMIN DASHBOARD</a>
+        <a href="/admin-dashboard" id="admin-dashboard-link" style="display:none;">ADMIN DASHBOARD</a>
     </div>
-    <div id="user-controls">
-        <span><span class="admin-flair">ADMIN</span> =Administration</span>
-        <a href="#" onclick="logout()">Log Out</a>
+    <div class="user-menu">
+        <span id="user-display">Guest</span>
+        <div class="user-menu-content">
+            <a href="/settings">Settings</a>
+            <a href="#" onclick="logout()">Log Out</a>
+        </div>
     </div>
 </div>
 <div class="content">
+    <div style="text-align: right;">
+        <button class="button" onclick="location.href='/post'">Make a post</button>
+        <button class="button" onclick="location.href='/contact'">Contact the admins</button>
+        <button class="button" onclick="location.href='/request'">Request a community</button>
+    </div>
+    
     <h2>Welcome to Leno!</h2>
     <p>Join the revolution in social networking. Leno is a platform where your voice matters, without the clutter.</p>
-    <div style="text-align: right;">
-        <button class="button" onclick="location.href='/create-post'">Make a post</button>
-        <button class="button" onclick="location.href='/request-community'">Request a community</button>
-    </div>
-    <div style="margin-top: 20px;">
-        <button class="button" onclick="location.href='/contact-admins'">Contact Site Admins</button>
-    </div>
     
-    <h3>Recent Posts in /Leno</h3>
-    <div class="post">
-        <div class="post-title">New Slogan Alert!</div>
-        <div class="post-meta">Posted by <span class="admin-flair">ADMIN</span> =Administration in /Leno · 2 hours ago</div>
-        <div class="post-content">
-            Hey Leno community! We've updated our slogan to better reflect what we stand for: "A fresh social, without the crap." 
-            What do you think? We believe this captures our commitment to providing a clean, straightforward platform for meaningful interactions. 
-            Share your thoughts below!
-        </div>
-        <div class="vote-buttons">
-            <button class="vote-button" onclick="vote(1, this)">▲</button>
-            <span class="vote-count">89</span>
-            <button class="vote-button" onclick="vote(-1, this)">▼</button>
-        </div>
-    </div>
-    
-    <div class="post">
-        <div class="post-title">Community Spotlight: /TechTalk</div>
-        <div class="post-meta">Posted by =LenoCommunityTeam in /Leno · 5 hours ago</div>
-        <div class="post-content">
-            We're excited to announce our newest approved community: /TechTalk! 
-            This space is dedicated to discussing the latest in technology and gadgets. 
-            Whether you're a tech novice or a seasoned pro, everyone is welcome to join the conversation. 
-            Head over to /TechTalk to start exploring!
-        </div>
-        <div class="vote-buttons">
-            <button class="vote-button" onclick="vote(1, this)">▲</button>
-            <span class="vote-count">62</span>
-            <button class="vote-button" onclick="vote(-1, this)">▼</button>
-        </div>
-    </div>
-
-    <div class="post">
-        <div class="post-title">Leno Update: Dark Mode Coming Soon!</div>
-        <div class="post-meta">Posted by <span class="admin-flair">ADMIN</span> =Administration in /Leno · 1 day ago</div>
-        <div class="post-content">
-            Great news, night owls! We've heard your requests, and we're thrilled to announce that Dark Mode is in the final stages of development. 
-            Soon, you'll be able to browse Leno comfortably at any hour. Stay tuned for the official release date!
-        </div>
-        <div class="vote-buttons">
-            <button class="vote-button" onclick="vote(1, this)">▲</button>
-            <span class="vote-count">215</span>
-            <button class="vote-button" onclick="vote(-1, this)">▼</button>
-        </div>
+    <div id="posts-container">
+        <!-- Posts will be dynamically loaded here -->
     </div>
 </div>
 
 <script>
+let lastActivity = Date.now();
+let inactivityTimeout;
+let isAdmin = false;
+
+function updateLastActivity() {
+    lastActivity = Date.now();
+    clearTimeout(inactivityTimeout);
+    inactivityTimeout = setTimeout(checkInactivity, 60000); // Check every minute
+}
+
+function checkInactivity() {
+    if (Date.now() - lastActivity > 900000) { // 15 minutes
+        logout();
+    } else {
+        inactivityTimeout = setTimeout(checkInactivity, 60000);
+    }
+}
+
 function logout() {
-    // In a real application, this would involve server-side logout
+    localStorage.removeItem('user');
     window.location.href = '/login';
 }
 
-function vote(direction, button) {
+function checkAdminStatus() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    isAdmin = user && user.isAdmin;
+    document.getElementById('admin-dashboard-link').style.display = isAdmin ? 'inline' : 'none';
+    document.getElementById('user-display').textContent = user ? user.username : 'Guest';
+}
+
+function loadPosts() {
+    // In a real application, this would fetch posts from a server
+    const postsContainer = document.getElementById('posts-container');
+    postsContainer.innerHTML = '<p>No posts to display. Be the first to make a post!</p>';
+}
+
+function vote(button, direction) {
     let voteCount = button.parentElement.querySelector('.vote-count');
     let currentVotes = parseInt(voteCount.textContent);
     voteCount.textContent = currentVotes + direction;
-    
     // In a real application, this would send the vote to the server
-    console.log(`Vote ${direction > 0 ? 'up' : 'down'} recorded`);
+}
+
+function removePost(button) {
+    if (confirm('Are you sure you want to remove this post?')) {
+        button.closest('.post-container').style.display = 'none';
+        // In a real application, this would send a request to the server to remove the post
+    }
+}
+
+function approvePost(button) {
+    button.style.backgroundColor = '#00FF00';
+    button.textContent = 'Approved';
+    // In a real application, this would send a request to the server to approve the post
+}
+
+function hideComment(button) {
+    let post = button.closest('.post-container');
+    let content = post.querySelector('.post-content');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        button.textContent = 'Hide Comment';
+    } else {
+        content.style.display = 'none';
+        button.textContent = 'Show Comment';
+    }
+    // In a real application, this would send a request to the server to hide/show the comment
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateLastActivity();
+    checkAdminStatus();
+    loadPosts();
+});
+
+document.addEventListener('mousemove', updateLastActivity);
+document.addEventListener('keypress', updateLastActivity);
+
+window.addEventListener('beforeunload', logout);
+
+// Simulating login (remove this in production)
+if (!localStorage.getItem('user')) {
+    window.location.href = '/login';
 }
 </script>
 </body></html>
