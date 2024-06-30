@@ -12,12 +12,26 @@
             padding: 0;
         }
         header {
-            background-color: #343a40;
+            background-color: #d32f2f; /* Red */
             color: white;
             padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+        }
+        .user-functions button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #fbc02d; /* Yellow */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .user-functions button:hover {
+            background-color: #f9a825; /* Darker Yellow */
         }
         .main {
             padding: 1rem;
@@ -25,10 +39,13 @@
         .actions button {
             margin-right: 1rem;
             padding: 0.5rem 1rem;
-            background-color: #007bff;
+            background-color: #d32f2f; /* Red */
             color: white;
             border: none;
             cursor: pointer;
+        }
+        .actions button:hover {
+            background-color: #c62828; /* Darker Red */
         }
         .post-list {
             margin-top: 2rem;
@@ -39,6 +56,9 @@
             margin-bottom: 1rem;
             border: 1px solid #ddd;
         }
+        .post-container strong {
+            color: #d32f2f; /* Red */
+        }
         .popup {
             position: fixed;
             top: 50%;
@@ -48,6 +68,25 @@
             padding: 2rem;
             border: 1px solid #ddd;
             display: none;
+            z-index: 1000;
+        }
+        .popup button {
+            padding: 0.5rem 1rem;
+            background-color: #d32f2f; /* Red */
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .popup button:hover {
+            background-color: #c62828; /* Darker Red */
+        }
+        .popup form input, .popup form textarea, .popup form select {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
         }
     </style>
 </head>
