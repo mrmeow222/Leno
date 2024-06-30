@@ -1,190 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leno.Live: The Reddit Alternative</title>
-  <style>
-    /* Your existing styles */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leno.Live: The Reddit Alternative</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main {
+            padding: 1rem;
+        }
+        .actions button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .post-list {
+            margin-top: 2rem;
+        }
+        .post-container {
+            background-color: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="logo">Leno.Live</div>
-    <div id="admin-dashboard" class="admin-dashboard" style="display:none;">ADMIN DASHBOARD</div>
-    <div class="user-functions">
-      <button id="login-btn" onclick="showLoginPopup()">Sign In</button>
-      <button id="signup-btn" onclick="showSignupPopup()">Sign Up</button>
+    <header>
+        <div class="logo">Leno.Live</div>
+        <div class="user-functions">
+            <button id="login-btn">Sign In</button>
+            <button id="signup-btn">Sign Up</button>
+        </div>
+    </header>
+    <div class="main">
+        <div class="actions">
+            <button onclick="showPostPopup()">Make a Post</button>
+        </div>
+        <div class="post-list" id="posts-container"></div>
     </div>
-  </header>
-  <div class="main">
-    <div class="actions">
-      <button onclick="showPostPopup()">Make a Post</button>
-      <button onclick="showContactPopup()">Contact the Admins</button>
-      <button onclick="showRequestPopup()">Request a Community</button>
+
+    <div id="post-popup" class="popup">
+        <h2>Make a Post</h2>
+        <form id="post-form">
+            <input type="text" id="postTitle" name="title" placeholder="Title" required>
+            <textarea id="postContent" name="content" placeholder="Text Content" required></textarea>
+            <label><input type="checkbox" name="nsfw"> Mark as NSFW</label>
+            <label><input type="checkbox" name="nsfl"> Mark as NSFL</label>
+            <select id="community" name="community" required>
+                <option value="/ExampleCommunity">/ExampleCommunity</option>
+            </select>
+            <button type="submit">Post</button>
+        </form>
+        <button onclick="closePopup('post-popup')">Close</button>
     </div>
-    <div class="post-list" id="posts-container"></div>
-  </div>
 
-  <div id="post-popup" class="popup" style="display:none;">
-    <h2>Make a Post</h2>
-    <form id="post-form">
-      <input type="text" id="postTitle" name="title" placeholder="Title" required>
-      <textarea id="postContent" name="content" placeholder="Text Content" required></textarea>
-      <label><input type="checkbox" name="nsfw"> Mark as NSFW</label>
-      <label><input type="checkbox" name="nsfl"> Mark as NSFL</label>
-      <select id="community" name="community" required>
-        <option value="/ExampleCommunity">/ExampleCommunity</option>
-      </select>
-      <button type="submit">Post</button>
-    </form>
-    <button onclick="closePopup('post-popup')">Close</button>
-  </div>
+    <div id="login-popup" class="popup">
+        <h2>Sign In</h2>
+        <form id="login-form" onsubmit="handleSignIn(event)">
+            <input type="text" id="signInUsername" placeholder="Username" required>
+            <input type="password" id="signInPassword" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+        </form>
+        <button onclick="closePopup('login-popup')">Close</button>
+    </div>
 
-  <div id="login-popup" class="popup" style="display:none;">
-    <h2>Sign In</h2>
-    <form id="login-form" onsubmit="handleSignIn(event)">
-      <input type="text" id="signInUsername" placeholder="Username" required>
-      <input type="password" id="signInPassword" placeholder="Password" required>
-      <button type="submit">Sign In</button>
-    </form>
-    <button onclick="closePopup('login-popup')">Close</button>
-  </div>
+    <div id="signup-popup" class="popup">
+        <h2>Sign Up</h2>
+        <form id="signup-form" onsubmit="handleSignUp(event)">
+            <input type="text" id="signUpUsername" placeholder="Username" required>
+            <input type="password" id="signUpPassword" placeholder="Password" required>
+            <input type="email" id="signUpEmail" placeholder="Email" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <button onclick="closePopup('signup-popup')">Close</button>
+    </div>
 
-  <div id="signup-popup" class="popup" style="display:none;">
-    <h2>Sign Up</h2>
-    <form id="signup-form" onsubmit="handleSignUp(event)">
-      <input type="text" id="signUpUsername" placeholder="Username" required>
-      <input type="password" id="signUpPassword" placeholder="Password" required>
-      <input type="email" id="signUpEmail" placeholder="Email" required>
-      <button type="submit">Sign Up</button>
-    </form>
-    <button onclick="closePopup('signup-popup')">Close</button>
-  </div>
+    <script>
+        let currentUser = null;
 
-  <script>
-    let currentUser = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const postsContainer = document.getElementById('posts-container');
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const postsContainer = document.getElementById('posts-container');
+            const postForm = document.getElementById('post-form');
+            postForm.addEventListener('submit', handleMakePost);
 
-      const postForm = document.getElementById('post-form');
-      postForm.addEventListener('submit', handleMakePost);
+            document.getElementById('login-btn').addEventListener('click', showLoginPopup);
+            document.getElementById('signup-btn').addEventListener('click', showSignupPopup);
 
-      document.getElementById('login-btn').addEventListener('click', showLoginPopup);
-      document.getElementById('signup-btn').addEventListener('click', showSignupPopup);
+            loadPosts();
 
-      loadPosts();
+            function showLoginPopup() {
+                document.getElementById('login-popup').style.display = 'block';
+            }
 
-      function showLoginPopup() {
-        document.getElementById('login-popup').style.display = 'block';
-      }
+            function showSignupPopup() {
+                document.getElementById('signup-popup').style.display = 'block';
+            }
 
-      function showSignupPopup() {
-        document.getElementById('signup-popup').style.display = 'block';
-      }
+            function showPostPopup() {
+                document.getElementById('post-popup').style.display = 'block';
+            }
 
-      function showPostPopup() {
-        document.getElementById('post-popup').style.display = 'block';
-      }
+            function closePopup(popupId) {
+                document.getElementById(popupId).style.display = 'none';
+            }
 
-      function closePopup(popupId) {
-        document.getElementById(popupId).style.display = 'none';
-      }
+            async function handleSignUp(event) {
+                event.preventDefault();
+                const username = document.getElementById('signUpUsername').value;
+                const password = document.getElementById('signUpPassword').value;
+                const email = document.getElementById('signUpEmail').value;
+                const response = await fetch('http://localhost:3000/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, email })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    closePopup('signup-popup');
+                } else {
+                    alert(data.message);
+                }
+            }
 
-      async function handleSignUp(event) {
-        event.preventDefault();
-        const username = document.getElementById('signUpUsername').value;
-        const password = document.getElementById('signUpPassword').value;
-        const email = document.getElementById('signUpEmail').value;
-        const response = await fetch('http://localhost:3000/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password, email })
+            async function handleSignIn(event) {
+                event.preventDefault();
+                const username = document.getElementById('signInUsername').value;
+                const password = document.getElementById('signInPassword').value;
+                const response = await fetch('http://localhost:3000/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    currentUser = username;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUIForLoggedInUser();
+                    closePopup('login-popup');
+                } else {
+                    alert(data.message);
+                }
+            }
+
+            async function handleMakePost(event) {
+                event.preventDefault();
+                const title = document.getElementById('postTitle').value;
+                const content = document.getElementById('postContent').value;
+                const nsfw = document.querySelector('input[name="nsfw"]').checked;
+                const nsfl = document.querySelector('input[name="nsfl"]').checked;
+                const community = document.getElementById('community').value;
+                const response = await fetch('http://localhost:3000/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, content, author: currentUser, nsfw, nsfl, community })
+                });
+                const newPost = await response.json();
+                addPostToUI(newPost);
+                closePopup('post-popup');
+            }
+
+            function addPostToUI(post) {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post-container');
+                postElement.innerHTML = `
+                    <strong>${post.title}</strong>
+                    <p>${post.content}</p>
+                    <button class="comments-button">View Comments</button>
+                `;
+                postsContainer.appendChild(postElement);
+            }
+
+            async function loadPosts() {
+                const response = await fetch('http://localhost:3000/posts');
+                const posts = await response.json();
+                posts.forEach(post => addPostToUI(post));
+            }
+
+            function updateUIForLoggedInUser() {
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('signup-btn').style.display = 'none';
+                // Show user-specific UI elements, e.g., profile settings, logout button, etc.
+            }
+
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (savedUser) {
+                currentUser = savedUser;
+                updateUIForLoggedInUser();
+            }
         });
-        const data = await response.json();
-        if (response.ok) {
-          alert(data.message);
-          closePopup('signup-popup');
-        } else {
-          alert(data.message);
-        }
-      }
-
-      async function handleSignIn(event) {
-        event.preventDefault();
-        const username = document.getElementById('signInUsername').value;
-        const password = document.getElementById('signInPassword').value;
-        const response = await fetch('http://localhost:3000/signin', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          currentUser = username;
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          updateUIForLoggedInUser();
-          closePopup('login-popup');
-        } else {
-          alert(data.message);
-        }
-      }
-
-      async function handleMakePost(event) {
-        event.preventDefault();
-        const title = document.getElementById('postTitle').value;
-        const content = document.getElementById('postContent').value;
-        const nsfw = document.querySelector('input[name="nsfw"]').checked;
-        const nsfl = document.querySelector('input[name="nsfl"]').checked;
-        const community = document.getElementById('community').value;
-        const response = await fetch('http://localhost:3000/posts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ title, content, author: currentUser, nsfw, nsfl, community })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          alert('Post created successfully');
-          closePopup('post-popup');
-          loadPosts();
-        } else {
-          alert('Error creating post');
-        }
-      }
-
-      async function loadPosts() {
-        const response = await fetch('http://localhost:3000/posts');
-        const posts = await response.json();
-        postsContainer.innerHTML = '';
-        posts.forEach(post => {
-          const postElement = document.createElement('div');
-          postElement.className = 'post-container';
-          postElement.innerHTML = `
-            <div class="vote-buttons">
-              <button>🔼</button>
-              <span>1</span>
-              <button>🔽</button>
-            </div>
-            <strong>${post.title}</strong>
-            <button class="comments-button">View Comments</button>
-          `;
-          postsContainer.appendChild(postElement);
-        });
-      }
-
-      function updateUIForLoggedInUser() {
-        document.getElementById('login-btn').style.display = 'none';
-        document.getElementById('signup-btn').style.display = 'none';
-        // Show user-specific UI elements, e.g., profile settings, logout button, etc.
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
