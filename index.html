@@ -1,0 +1,126 @@
+<html><head><base href="https://leno.live">
+  <title>Leno.live: The Reddit Alternative</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ff4500;
+      color: white;
+      text-align: center;
+      padding: 1rem 2rem;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .admin-dashboard {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      background-color: red;
+      color: yellow;
+      padding: 0.5rem;
+    }
+    .user-functions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .user-functions button {
+      background-color: yellow;
+      color: #ff4500;
+      border: none;
+      margin-left: 5px;
+      padding: 0.5rem;
+    }
+    .main {
+      padding: 2rem;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .actions button {
+      background-color: #ff4500;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    .actions button:hover {
+      background-color: #e63900;
+    }
+    .post-container {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .vote-buttons {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+    .vote-buttons button {
+      border: none;
+      background-color: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .comments-button {
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Leno.Live</div>
+    <div id="admin-dashboard" class="admin-dashboard" style="display:none;">ADMIN DASHBOARD</div>
+    <div class="user-functions">
+      <button id="login-btn" onclick="showLoginPopup()">Sign In</button>
+      <button id="signup-btn" onclick="showSignupPopup()">Sign Up</button>
+    </div>
+  </header>
+  <div class="main">
+    <div class="actions">
+      <button onclick="showPostPopup()">Make a Post</button>
+      <button onclick="showContactPopup()">Contact the Admins</button>
+      <button onclick="showRequestPopup()">Request a Community</button>
+    </div>
+    <div class="post-list">
+      <div class="post-container">
+        <div class="vote-buttons">
+          <button>🔼</button>
+          <span>1</span>
+          <button>🔽</button>
+        </div>
+        <strong>Example Post</strong>
+        <button class="comments-button">View Comments</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="post-popup" class="popup" style="display:none;">
+    <h2>Make a Post</h2>
+    <form id="post-form">
+      <input type="text" name="title" placeholder="Title" required>
+      <textarea name="content" placeholder="Text Content" required></textarea>
+      <label><input type="checkbox" name="nsfw"> Mark as NSFW</label>
+      <label><input type="checkbox" name="nsfl"> Mark as NSFL</label>
+      <select name="community" required>
+        <option value="/ExampleCommunity">/ExampleCommunity</option>
+        <!-- Additional options dynamically populated if necessary -->
+      </select>
+      <button type="submit">Post</button>
+    </form>
+    <button onclick="closePopup('post-popup')">Close</button>
+  </div>
+
+ 
